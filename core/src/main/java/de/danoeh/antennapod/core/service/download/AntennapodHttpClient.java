@@ -17,11 +17,16 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import de.danoeh.antennapod.core.storage.DBWriter;
 
@@ -105,10 +110,12 @@ public class AntennapodHttpClient {
         // configure redirects
         client.setFollowRedirects(true);
         client.setFollowSslRedirects(true);
+        client.setHostnameVerifier((s, sslSession) -> true);
 
-        if(16 <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < 21) {
+        if (Build.VERSION.SDK_INT < 21) {
             client.setSslSocketFactory(new CustomSslSocketFactory());
         }
+
         return client;
     }
 
@@ -125,11 +132,29 @@ public class AntennapodHttpClient {
     private static class CustomSslSocketFactory extends SSLSocketFactory {
 
         private SSLSocketFactory factory;
-
+        // Old android ssl certificate is outdated.
+        // The user shall install updated cert on the phone but I failed to do so.
+        // So all cert is trusted as a workaround.  Not secure.
         public CustomSslSocketFactory() {
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[0];
+                        }
+                    }
+            };
             try {
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
+                SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
                 factory= sslContext.getSocketFactory();
             } catch(GeneralSecurityException e) {
                 e.printStackTrace();
@@ -183,7 +208,7 @@ public class AntennapodHttpClient {
         }
 
         private void configureSocket(SSLSocket s) {
-            s.setEnabledProtocols(new String[] { "TLSv1.2", "TLSv1.1", "TLSv1" } );
+            s.setEnabledProtocols(new String[] { "TLSv1.3", "TLSv1.2", "TLSv1.1", "TLSv1" } );
         }
 
     }

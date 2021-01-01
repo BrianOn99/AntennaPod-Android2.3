@@ -57,4 +57,5 @@ dependencies {
     compile "io.reactivex:rxandroid:$rxAndroidVersion"
 
     compile "com.github.AntennaPod:AntennaPod-AudioPlayer:$audioPlayerVersion"
+    compile "org.conscrypt:conscrypt-android:$conscryptVersion"
 }

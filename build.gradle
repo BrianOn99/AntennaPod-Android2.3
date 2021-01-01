@@ -3,6 +3,10 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:1.5.0"
@@ -17,6 +21,10 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 }
 
@@ -58,6 +66,7 @@ project.ext {
     rxJavaRulesVersion = "1.1.0.0"
 
     audioPlayerVersion = "v1.0.12"
+    conscryptVersion = "2.5.1"
 }
 
 task wrapper(type: Wrapper) {
