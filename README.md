@@ -1,3 +1,20 @@
+# AntennaPod for Android2.3
+
+To make AntennaPod works on Android2.3, to revive my HTC desire (made in 2010).
+
+AntennaPod now (2021) only supports Android4.1+.  Android support is dropped on tag 1.6.4.2
+But even the old version cannot play podcast now due to SSL compatibility.
+
+This repo solve the problem.  But streaming still does not work.
+
+This version is based on 1.5.0.9 because newer version cannot even show the podcast.
+
+Probably no one else will find this useful.
+
+APK can be found in release page.
+
+Original README starts from below.
+
 # AntennaPod
 
 This is the official repository of AntennaPod, the easy-to-use, flexible and open-source podcast manager for Android.
